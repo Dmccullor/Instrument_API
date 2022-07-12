@@ -109,11 +109,11 @@ public class UserController{
 		Optional<User> toDelete = repo.findById(id);
 		
 		if(toDelete == null) {
-			return ResponseEntity.status(204).body("No one to delete");
+			return ResponseEntity.status(404).body("No one to delete");
 		}
 		else {
 			repo.deleteById(id);
-			return ResponseEntity.status(204).body("User with id of " + id + " has been deleted.");
+			return ResponseEntity.status(200).body("User with id of " + id + " has been deleted.");
 		}
 		
 	}
@@ -126,7 +126,9 @@ public class UserController{
 			return ResponseEntity.status(404).body("User not found.");
 		}
 		else {
-			User updated = repo.save(service.updateUser(user));
+			User updated = service.updateUser(user);
+			updated.setPassword(encoder.encode(updated.getPassword()));
+			repo.save(updated);
 			return ResponseEntity.status(200).body(updated);
 		}
 	}
